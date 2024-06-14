@@ -1,8 +1,8 @@
-🎵 Tab Notation Conversion System
-Overview
-Our project is a Tab Notation Conversion System, which utilizes YOLOv5 for sheet music recognition, basic-pitch for audio pitch detection, and mido for MIDI file handling. This application seamlessly converts recognized music sheets and audio into tab notations, facilitating musicians in generating accurate and readable tabs from both visual and audio inputs.
+🎵 타브 악보 변환 시스템
+개요
+우리의 프로젝트는 타브 악보 변환 시스템으로, YOLOv5를 사용한 악보 인식, basic-pitch를 통한 오디오 음정 감지, mido를 이용한 MIDI 파일 처리를 통해 시각적 및 음성 입력에서 정확하고 읽기 쉬운 타브 악보를 생성할 수 있는 애플리케이션입니다.
 
-Features
-Sheet Music Recognition: Uses YOLOv5 to identify and process sheet music.
-Audio Pitch Detection: Employs basic-pitch for precise audio-to-pitch conversion.
-MIDI Handling: Integrates mido for managing MIDI files and generating corresponding tabs.
+기능
+악보 인식: YOLOv5를 사용하여 악보를 인식하고 처리합니다.
+오디오 음정 감지: basic-pitch를 통해 정확한 음정 변환을 수행합니다.
+MIDI 처리: mido를 통합하여 MIDI 파일을 관리하고 대응되는 타브 악보를 생성합니다.
