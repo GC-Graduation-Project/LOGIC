@@ -23,7 +23,7 @@ def handle_other_file(file_path):
 
 @smart_inference_mode()
 def run(
-        source=ROOT / 'resources/music.jpg',  # file/dir/URL/glob/screen/0(webcam)
+        source=ROOT / 'resources/music1.jpg',  # file/dir/URL/glob/screen/0(webcam)
 ):
     source = str(source)
     if source.lower().endswith(IMAGE_EXTENSIONS):
@@ -37,7 +37,7 @@ def run(
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--source', type=str, default=ROOT / 'resources/music.jpg', help='[your_music_sheet_image_file]')
+    parser.add_argument('--source', type=str, default=ROOT / 'resources/music1.jpg', help='[your_music_sheet_image_file]')
     opt = parser.parse_args()
     return opt
 
