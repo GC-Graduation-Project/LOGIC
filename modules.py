@@ -1,11 +1,12 @@
 # modules.py
 import os
-
 import cv2
 import numpy as np
 import functions as fs
 from pitchDetection import detect, detect1
 from beatDetection import detectBeat
+
+
 
 def deskew(image): # 이미지 보정 함수 작성 완료.
     src=image.copy()
@@ -210,15 +211,26 @@ def pitch_extraction(stave_list, normalized_images, clef_list):
         original_list.append(result)
 
     for clef, notes in zip(clef_list, original_list):
-        notes.insert(0, clef[0])
+        # clef가 이미 notes에 포함되어 있지 않은 경우에만 추가
+        if not any(clef[0][1] == note[1] for note in notes):
+            notes.insert(0, clef[0])
         notes = fs.add_dot(notes)
         tmp = fs.remove_notes(notes)
         note_tmp_list = fs.mapping_notes(stave_list[ind], tmp)
+
+        # 클레프 종류에 따라 0 또는 1 추가
+        if clef[0][1] == 'gClef':
+            note_tmp_list.insert(0, 0)
+        elif clef[0][1] == 'fClef':
+            note_tmp_list.insert(0, 1)
+
         final_result.append(note_tmp_list)
         ori2.append(tmp)
         ind += 1
 
     return ori2, final_result
+
+
 
 def beat_extraction(normalized_images):
     split_list = []
@@ -300,8 +312,7 @@ def beat_extraction(normalized_images):
             if(result==[]):
                 continue
 
-            # print(result) # 인식결과
-
+            print(result)
             # # 이미지 체킹할때 쓰는거
             # path = os.getcwd()
             # print(result)

@@ -16,20 +16,6 @@ def camera_threshold(image):
     image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 10)
     return image
 
-def closing(image):
-    kernel = np.ones((weighted(5), weighted(5)), np.uint8)
-    image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
-    return image
-
-def get_number(note):
-    mapping = {
-        'C4': '3/5', 'D4': '5/5', 'E4': '7/5', 'F4': '8/5', 'G4': '10/5',
-        'A4': '12/5', 'B4': '14/5', 'C5': '15/5', 'D5': '17/5', 'E5': '19/5',
-        'F5': '20/5'
-    }
-
-    return mapping.get(note, "해당 문자열에 대한 숫자가 없습니다.")
-
 def get_guitar(note):
     mapping = {
         'E4': ['0/1', '5/2', '9/3'],
@@ -102,15 +88,74 @@ def get_guitar(note):
     }
     return mapping.get(note, "해당 문자열에 대한 숫자가 없습니다.")
 
+def get_bass_guitar(note):
+    mapping = {
+        'E2': ['0/4'],
+        'F2': ['1/4'],
+        'F#2': ['2/4'],
+        'G♭2': ['2/4'],
+        'G2': ['3/4'],
+        'G#2': ['4/4'],
+        'A♭2': ['4/4'],
+        'A2': ['5/4', '0/3'],
+        'A#2': ['6/4', '1/3'],
+        'B♭2': ['6/4', '1/3'],
+        'B2': ['7/4', '2/3'],
+        'C3': ['8/4', '3/3'],
+        'C#3': ['9/4', '4/3'],
+        'D♭3': ['9/4', '4/3'],
+        'D3': ['10/4', '5/3', '0/2'],
+        'D#3': ['11/4', '6/3', '1/2'],
+        'E♭3': ['11/4', '6/3', '1/2'],
+        'E3': ['12/4', '7/3', '2/2'],
+        'F3': ['13/4', '8/3', '3/2'],
+        'F#3': ['14/4', '9/3', '4/2'],
+        'G♭3': ['14/4', '9/3', '4/2'],
+        'G3': ['15/4', '10/3', '5/2', '0/1'],
+        'G#3': ['16/4', '11/3', '6/2', '1/1'],
+        'A♭3': ['16/4', '11/3', '6/2', '1/1'],
+        'A3': ['17/4', '12/3', '7/2', '2/1'],
+        'A#3': ['18/4', '13/3', '8/2', '3/1'],
+        'B♭3': ['18/4', '13/3', '8/2', '3/1'],
+        'B3': ['19/4', '14/3', '9/2', '4/1'],
+        'C4': ['20/4', '15/3', '10/2', '5/1'],
+        'C#4': ['21/4', '16/3', '11/2', '6/1'],
+        'D♭4': ['21/4', '16/3', '11/2', '6/1'],
+        'D4': ['22/4', '17/3', '12/2', '7/1'],
+        'D#4': ['18/3', '13/2', '8/1'],
+        'E♭4': ['18/3', '13/2', '8/1'],
+        'E4': ['19/3', '14/2', '9/1'],
+        'F4': ['20/3', '15/2', '10/1'],
+        'F#4': ['21/3', '16/2', '11/1'],
+        'G♭4': ['21/3', '16/2', '11/1'],
+        'G4': ['22/3', '17/2', '12/1'],
+        'G#4': ['18/2', '13/1'],
+        'A♭4': ['18/2', '13/1'],
+        'A4': ['19/2', '14/1'],
+        'A#4': ['20/2', '15/1'],
+        'B♭4': ['20/2', '15/1'],
+        'B4': ['21/2', '16/1'],
+        'C5': ['22/2', '17/1'],
+        'C#5': ['18/1'],
+        'D♭5': ['18/1'],
+        'D5': ['19/1'],
+        'D#5': ['20/1'],
+        'E♭5': ['20/1'],
+        'E5': ['21/1'],
+        'F5': ['22/1']
+    }
+
+    return mapping.get(note, [])
+
+
 
 def mapping_notes(stav, notes):
     updated_notes_gclef = ['F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3', 'F3', 'E3', 'D3', 'C3']
-    updated_notes_fclef = ['F5', 'E5', 'D5', 'C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4']  # 수정 필요
+    updated_notes_fclef = ['F3', 'E3', 'D3', 'C3', 'B2', 'A2', 'G2', 'F2', 'E2', 'D2', 'C2']  # 낮은음자리표에 맞는 음 리스트
     updated_notes = []
     notes_list = []
 
     for note in notes:
-
         value, note_type = note[0], note[1]
         if note[1] == 'gClef':
             updated_notes = updated_notes_gclef
@@ -124,8 +169,9 @@ def mapping_notes(stav, notes):
         index = stav.index(closest_distance)
         note = updated_notes[index % len(updated_notes)]
         notes_list.append(note)
-
+    print(notes_list)
     return notes_list
+
 
 
 
@@ -235,14 +281,19 @@ def update_notes(top_list, bottom_list, tolerance=15):
                     top_item[1] = 'half_note'
                 elif 'Whole' in top_item[1]:
                     top_item[1] = 'whole_note'
+                elif 'keySharp' in top_item[1]:
+                    top_item[1] = 'sharp'
                 else:
                     top_item[1] = None
             else:
                 top_item[1] = None
 
-        updated_list.append(top_item)
+        # top_item[1]이 None이 아닌 경우에만 updated_list에 추가
+        if top_item[1] is not None:
+            updated_list.append(top_item)
 
     return updated_list
+
 
 def count_sharps_flats(data_list):
     sharps = 0
@@ -256,6 +307,7 @@ def count_sharps_flats(data_list):
                 flats += 1
 
     return sharps, flats
+
 
 def merge_three_lists(list1, list2, list3):
     merged_list = []
@@ -303,17 +355,19 @@ def merge_three_lists(list1, list2, list3):
 
     return final_list
 
+
+
 def convert_to_sentence(mapped_result_list):
     complete_sentence = ""
 
     note_mapping = {
         'gClef': ('treble ', 0),
         'fClef': ('bass', 0),
-        'four_four': ('time=4/4\nnotes', 0),
+        'four_four': (' time=4/4\nnotes', 0),
         'quarter_note': (' :q ', 0.25),
         'half_note': (' :h ', 0.5),
-        'half_note_dot' : (' :hd ', 0.75),
-        'dot_half_note' : (' :hd ', 0.75),
+        'half_note_dot': (' :hd ', 0.75),
+        'dot_half_note': (' :hd ', 0.75),
         'dot_half_note_dot': (' :hd ', 0.75),
         'quarter_note_dot': (' :qd ', 0.375),
         'dot_quarter_note_dot': (' :qd ', 0.375),
@@ -327,8 +381,9 @@ def convert_to_sentence(mapped_result_list):
         sen = "\ntabstave notation=true clef="  # Start a new tabstave for each list
         current_time = 0  # Initialize current time for each line
         sharp_count = 0  # Initialize sharp count for each line
-        four_four_found = False
-        gclef_found = False
+        four_four_added = False  # Flag to check if 4/4 is added
+        clef_added = False  # Flag to check if clef is added
+        clef_type = ""
 
         for i, item in enumerate(result):
             action, value = note_mapping.get(item[0], ('', 0))
@@ -337,14 +392,18 @@ def convert_to_sentence(mapped_result_list):
                 sharp_count += 1
                 continue  # Skip adding sharp symbol to the sentence
 
-            if item[0] == 'gClef':
-                gclef_found = True
+            if item[0] in ['gClef', 'fClef'] and not clef_added:
+                clef_added = True
+                clef_type = item[0]
 
-            if item[0] == 'four_four':
-                four_four_found = True
+            if item[0] == 'four_four' and not four_four_added:
+                four_four_added = True
                 if sharp_count == 1:
                     sen += " key=G "  # Add key=G if exactly one sharp
                     sharp_count = 0  # Reset sharp count after adding key=G
+                elif sharp_count == 2:
+                    sen += " key=D "  # Add key=D if exactly two sharps
+                    sharp_count = 0  # Reset sharp count after adding key=D
 
             if current_time + value > 1:  # If the bar length exceeds 1, add a bar line
                 sen += " |"
@@ -357,15 +416,35 @@ def convert_to_sentence(mapped_result_list):
 
             current_time += value
 
-        # Check for gClef without four_four
-        if gclef_found and not four_four_found and sharp_count == 1:
-            sen = sen.replace('clef=treble', 'clef=treble key=G\nnotes')
-        elif gclef_found and not four_four_found:
-            sen = sen.replace('clef=treble', 'clef=treble \nnotes')
+        # Check for clef without four_four
+        if clef_added and not four_four_added:
+            if sharp_count == 1:
+                if clef_type == 'gClef':
+                    sen = sen.replace('clef=treble', 'clef=treble key=G\nnotes')
+                elif clef_type == 'fClef':
+                    sen = sen.replace('clef=bass', 'clef=bass key=G\nnotes')
+            elif sharp_count == 2:
+                if clef_type == 'gClef':
+                    sen = sen.replace('clef=treble', 'clef=treble key=D\nnotes')
+                elif clef_type == 'fClef':
+                    sen = sen.replace('clef=bass', 'clef=bass key=D\nnotes')
+            else:
+                if clef_type == 'gClef':
+                    sen = sen.replace('clef=treble', 'clef=treble \nnotes')
+                elif clef_type == 'fClef':
+                    sen = sen.replace('clef=bass', 'clef=bass \nnotes')
+        elif clef_added and four_four_added:
+            if sharp_count == 1:
+                sen = sen.replace('\nnotes', ' key=G\nnotes')
+            elif sharp_count == 2:
+                sen = sen.replace('\nnotes', ' key=D\nnotes')
         sen += " =|="
         complete_sentence += sen
 
     return complete_sentence
+
+
+
 
 def remove_notes(lst):
     # 비슷한 요소들 중 마지막 요소를 제외하고 리스트를 반환
@@ -380,3 +459,83 @@ def remove_notes(lst):
         if keep:
             to_keep.append(lst[i])
     return to_keep
+
+def standardize_sharps(rec_list):
+    sharp_counts = [sum(1 for item in line if item[1] == 'sharp') for line in rec_list]
+    max_sharps = max(sharp_counts)
+
+    if max_sharps == 0:
+        return rec_list
+
+    max_sharp_index = sharp_counts.index(max_sharps)
+    y_value = next(item[0] for item in rec_list[max_sharp_index] if item[1] == 'sharp')
+    x_value = next(item[2] for item in rec_list[max_sharp_index] if item[1] == 'sharp')
+
+    for i, line in enumerate(rec_list):
+        current_sharps = sharp_counts[i]
+        if current_sharps < max_sharps:
+            difference = max_sharps - current_sharps
+            for _ in range(difference):
+                for idx, item in enumerate(line):
+                    if item[1] == 'gClef':
+                        line.insert(idx + 1, [y_value, 'sharp', x_value])
+                        break
+
+    return rec_list
+
+def standardize_keysharps(note_list2):
+    keysharp_counts = [sum(1 for item in line if item[1] == 'keySharp') for line in note_list2]
+    max_keysharps = max(keysharp_counts)
+
+    if max_keysharps == 0:
+        return note_list2
+
+    max_keysharp_index = keysharp_counts.index(max_keysharps)
+    y_value = next(item[0] for item in note_list2[max_keysharp_index] if item[1] == 'keySharp')
+    x_value = next(item[2] for item in note_list2[max_keysharp_index] if item[1] == 'keySharp')
+
+    for i, line in enumerate(note_list2):
+        current_keysharps = keysharp_counts[i]
+        if current_keysharps < max_keysharps:
+            difference = max_keysharps - current_keysharps
+            for _ in range(difference):
+                for idx, item in enumerate(line):
+                    if item[1] == 'gClef':
+                        line.insert(idx + 1, [y_value, 'keySharp', x_value])
+                        break
+
+    return note_list2
+
+
+
+def synchronize_sharps_and_keysharps(rec_list, note_list2):
+    """
+    rec_list에서 각 줄의 'sharp' 개수와 note_list2에서 각 줄의 'keySharp' 개수를 센다.
+    두 리스트 중 더 큰 값의 샵 개수를 바탕으로 더 적은 쪽의 샵 리스트를 수정한다.
+    """
+    for i in range(len(rec_list)):
+        # 각 줄에서 sharp와 keySharp의 개수를 셈
+        sharp_count = sum(1 for item in rec_list[i] if item[1] == 'sharp')
+        keysharp_count = sum(1 for item in note_list2[i] if item[1] == 'keySharp')
+
+        # 더 큰 값을 기준으로 설정
+        max_count = max(sharp_count, keysharp_count)
+
+        # rec_list의 sharp 개수가 부족할 경우 추가
+        if sharp_count < max_count:
+            difference = max_count - sharp_count
+            y_value = next((item[0] for item in rec_list[i] if item[1] == 'sharp'), rec_list[i][0][0])
+            x_value = next((item[2] for item in rec_list[i] if item[1] == 'sharp'), rec_list[i][0][2])
+            for _ in range(difference):
+                rec_list[i].insert(1, [y_value, 'sharp', x_value])  # gClef 뒤에 추가
+
+        # note_list2의 keySharp 개수가 부족할 경우 추가
+        if keysharp_count < max_count:
+            difference = max_count - keysharp_count
+            y_value = next((item[0] for item in note_list2[i] if item[1] == 'keySharp'), note_list2[i][0][0])
+            x_value = next((item[2] for item in note_list2[i] if item[1] == 'keySharp'), note_list2[i][0][2])
+            for _ in range(difference):
+                note_list2[i].insert(1, [y_value, 'keySharp', x_value])  # gClef 뒤에 추가
+
+    return rec_list, note_list2
+

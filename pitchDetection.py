@@ -1,7 +1,10 @@
+#pitchDetection.py
+
 import os
 import cv2
 import torch
 import numpy as np
+
 
 from numpy import random
 from models.experimental import attempt_load
@@ -11,7 +14,6 @@ from utils.plots import plot_one_box
 from utils.torch_utils import select_device
 
 
-SOURCE = 'image2.png'
 WEIGHTS = os.getcwd()  + '/models/' + 'best2.pt'
 IMG_SIZE = 640
 DEVICE = ''
@@ -24,8 +26,8 @@ AGNOSTIC_NMS = False
 # stave_list가 들어올 경우 result_list에서
 
 def detect(image):
-    source, weights, imgsz = SOURCE, WEIGHTS, IMG_SIZE
-    source=image
+    weights, imgsz = WEIGHTS, IMG_SIZE
+    source = image
     result_list=[] # 인식 결과를 담은 list 생성
     # Initialize
     device = select_device('cpu') # 일단 CPU defalut로
@@ -107,11 +109,12 @@ def detect(image):
     #print(result_list)
     # Stream results
    # print(s)
+
     return result_list
 def detect1(image):
-    source, weights, imgsz = SOURCE, WEIGHTS, IMG_SIZE
-    source=image
-    weights = os.getcwd()  + '/models/' + 'best3.pt'
+    imgsz = 1280
+    source = image
+    weights = os.getcwd()  + '/models/' + 'masking.pt'
     result_list=[] # 인식 결과를 담은 list 생성
     # Initialize
     device = select_device('cpu') # 일단 CPU defalut로
@@ -156,7 +159,7 @@ def detect1(image):
   #  print('pred shape:', pred.shape)
 
     # Apply NMS
-    pred = non_max_suppression(pred, 0.4, IOU_THRES, classes=[9, 10], agnostic=AGNOSTIC_NMS)
+    pred = non_max_suppression(pred, 0.4, IOU_THRES, classes=[9, 20], agnostic=AGNOSTIC_NMS)
 
     # Process detections
     det = pred[0]

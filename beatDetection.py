@@ -1,3 +1,5 @@
+#beatDetection.py
+
 import os
 import cv2
 import torch
@@ -9,6 +11,7 @@ from utils.dataloaders import letterbox
 from utils.general import check_img_size, check_requirements, non_max_suppression, scale_boxes
 from utils.plots import plot_one_box
 from utils.torch_utils import select_device
+
 
 
 SOURCE = os.getcwd() + "/result/" + "result/normalized_1_object_3_pillar_1.png"

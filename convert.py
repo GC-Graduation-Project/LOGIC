@@ -5,7 +5,6 @@ import modules as md
 import pitchDetection
 import time
 
-
 def convert(source):
     # source가 numpy.ndarray 인스턴스인지 확인합니다.
     if isinstance(source, np.ndarray):
@@ -40,15 +39,27 @@ def convert(source):
     third = time.time()
     print(f"\nPitch Detection End {third - second:.1f} sec")
 
+    rec_list = fs.standardize_sharps(rec_list)
+    note_list2 = fs.standardize_keysharps(note_list2)
+
+    rec_list, note_list2 = fs.synchronize_sharps_and_keysharps(rec_list, note_list2)
+
     for i, (rec, pitches) in enumerate(zip(rec_list, pitch_list)):
         sharps, flats = fs.count_sharps_flats(rec)
+        if sharps == 0 and flats == 0:
+            sharps = 0
+            flats = 0
         temp_dict = {}
-        modified_pitches = fs.modify_notes(pitches, sharps, flats)
+        clef_type = pitches[0]  # clef type is the first element
+        modified_pitches = fs.modify_notes(pitches[1:], sharps, flats)  # Skip the clef type in pitches
         for pit in modified_pitches:
-            positions = fs.get_guitar(pit)
+            if clef_type == 0:
+                positions = fs.get_guitar(pit)
+            elif clef_type == 1:
+                positions = fs.get_bass_guitar(pit)
             temp_dict[pit] = positions
         modified_pitches = fs.calculate_efficient_positions(modified_pitches, temp_dict)
-        pitch_list[i] = modified_pitches  # Update the pitch_list with modified pitches
+        pitch_list[i] = [clef_type] + modified_pitches  # Update the pitch_list with modified pitches including clef type
 
     for note2, note1 in zip(note_list2, note_list):
         note2[1:] = fs.update_notes(note2[1:], note1)
