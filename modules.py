@@ -312,7 +312,6 @@ def beat_extraction(normalized_images):
             if(result==[]):
                 continue
 
-            print(result)
             # # 이미지 체킹할때 쓰는거
             # path = os.getcwd()
             # print(result)
