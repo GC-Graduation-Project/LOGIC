@@ -72,7 +72,7 @@ https://github.com/GC-Graduation-Project/BE
 | ID        | Name             | Email                | Role                |
 |-----------|------------------|----------------------|----------------------|
 | 201935075 | Yang-JunHyoung(양준형) | yangkun053@gachon.ac.kr | Sheet Recognition  |
-| 201935113 | Lee-HanSeul(이한슬) | parks4754@gmail.com  | Music Recognition  |
+| 201935113 | Lee-HanSeul(이한슬) | hanseul37@gachon.ac.kr  | Music Recognition  |
 | 201935125 | Jung-GyuWon(정규원) | kcc0520@gachon.ac.kr  | Sheet Recognition  |
 | 202135563 | Lee-EunSeo(이은서) | silverl@gachon.ac.kr | Music Recognition  |
 
