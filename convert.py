@@ -44,29 +44,9 @@ def convert(source):
 
     rec_list, note_list2 = fs.synchronize_sharps_and_keysharps(rec_list, note_list2)
 
-    for i, (rec, pitches) in enumerate(zip(rec_list, pitch_list)):
-        sharps, flats = fs.count_sharps_flats(rec)
-        if sharps == 0 and flats == 0:
-            sharps = 0
-            flats = 0
-        temp_dict = {}
-        clef_type = pitches[0]  # clef type is the first element
-        modified_pitches = fs.modify_notes(pitches[1:], sharps, flats)  # Skip the clef type in pitches
-        for pit in modified_pitches:
-            if clef_type == 0:
-                positions = fs.get_guitar(pit)
-            elif clef_type == 1:
-                positions = fs.get_bass_guitar(pit)
-            temp_dict[pit] = positions
-        modified_pitches = fs.calculate_efficient_positions(modified_pitches, temp_dict)
-        pitch_list[i] = [clef_type] + modified_pitches  # Update the pitch_list with modified pitches including clef type
-
-    for note2, note1 in zip(note_list2, note_list):
-        note2[1:] = fs.update_notes(note2[1:], note1)
-
-    for list1, list2, list3 in zip(rec_list, note_list2, pitch_list):
-        m_list = fs.merge_three_lists(list1, list2, list3)
-        final_list.append(m_list)
+    md.process_pitches(rec_list, pitch_list)
+    md.update_notes(note_list2, note_list)
+    final_list = md.merge_lists(rec_list, note_list2, pitch_list)
 
     sen = fs.convert_to_sentence(final_list)
 
